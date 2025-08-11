@@ -107,7 +107,7 @@
             <el-icon><Cpu /></el-icon>
             <span>AI算法</span>
           </template>
-          <el-menu-item index="/machine-learning/xgboost"><el-icon><DArrowRight /></el-icon>神经网络模型</el-menu-item>
+          <el-menu-item index="/machine-learning/神经网络模型"><el-icon><DArrowRight /></el-icon>神经网络模型</el-menu-item>
           <el-menu-item index="/machine-learning/lightgbm"><el-icon><DArrowRight /></el-icon>LightGBM</el-menu-item>
           <el-menu-item index="/machine-learning/catboost"><el-icon><DArrowRight /></el-icon>CatBoost</el-menu-item>
           <el-menu-item index="/machine-learning/decision-tree"><el-icon><DArrowRight /></el-icon>决策树</el-menu-item>

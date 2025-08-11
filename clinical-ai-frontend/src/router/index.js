@@ -14,10 +14,10 @@ const routes = [
       // 登录系统
       { path: 'system/login', name: 'Login', component: ComingSoon, meta: { parentTitle: '登录系统', title: '登录界面' } },
       { path: 'system/intro', name: 'SoftwareIntro', component: () => import('../views/Dashboard.vue'), meta: { parentTitle: '登录系统', title: '软件介绍' } },
-      
+
       // 样本量计算
       { path: 'sample-size-calculation', name: 'SampleSizeCalculation', component: ComingSoon, meta: { parentTitle: '样本量计算', title: '样本量计算' } },
-      
+
       // 数据清洗
       { path: 'data-cleaning/missing-value', name: 'MissingValue', component: ComingSoon, meta: { parentTitle: '数据清洗', title: '缺失值处理' } },
       { path: 'data-cleaning/psm', name: 'PSM', component: ComingSoon, meta: { parentTitle: '数据清洗', title: '倾向性评分' } },
@@ -26,7 +26,7 @@ const routes = [
       { path: 'data-cleaning/cutoff', name: 'Cutoff', component: ComingSoon, meta: { parentTitle: '数据清洗', title: '查找截断值' } },
       { path: 'data-cleaning/rcs', name: 'RCS', component: ComingSoon, meta: { parentTitle: '数据清洗', title: '限制性立方样条RCS' } },
       { path: 'data-cleaning/non-numeric', name: 'NonNumeric', component: ComingSoon, meta: { parentTitle: '数据清洗', title: '非数值列检测' } },
-      
+
       // 数据准备
       { path: 'data-preparation', name: 'DataPreparation', component: ComingSoon, meta: { parentTitle: '数据准备', title: '数据准备' } },
 
@@ -43,7 +43,7 @@ const routes = [
       { path: 'variable-selection/mrmr', name: 'MRMR', component: ComingSoon, meta: { parentTitle: '自变量筛选', title: '最大相关最小冗余' } },
       { path: 'variable-selection/icc', name: 'ICC', component: ComingSoon, meta: { parentTitle: '自变量筛选', title: '组内相关系数ICC' } },
       { path: 'variable-selection/imaging-features', name: 'ImagingFeatures', component: ComingSoon, meta: { parentTitle: '自变量筛选', title: '影像特征筛选' } },
-      
+
       // 多因素分析
       { path: 'multivariate-analysis', name: 'MultivariateAnalysis', component: ComingSoon, meta: { parentTitle: '多因素分析', title: '多因素分析' } },
 
@@ -62,15 +62,15 @@ const routes = [
       { path: 'cross-validation/leave-one-out', name: 'LeaveOneOutCV', component: ComingSoon, meta: { parentTitle: '交叉验证', title: '留一法交叉验证' } },
       { path: 'cross-validation/bootstrap', name: 'BootstrapCV', component: ComingSoon, meta: { parentTitle: '交叉验证', title: 'Boot自助法' } },
 
-      // 机器学习算法
-      { path: 'machine-learning/xgboost', name: '神经网络模型', component: ComingSoon, meta: { parentTitle: '机器学习算法', title: 'XGBoost' } },
-      { path: 'machine-learning/lightgbm', name: 'LightGBM', component: ComingSoon, meta: { parentTitle: '机器学习算法', title: 'LightGBM' } },
-      { path: 'machine-learning/catboost', name: 'CatBoost', component: ComingSoon, meta: { parentTitle: '机器学习算法', title: 'CatBoost' } },
-      { path: 'machine-learning/decision-tree', name: 'DecisionTree', component: ComingSoon, meta: { parentTitle: '机器学习算法', title: '决策树' } },
-      { path: 'machine-learning/random-forest-ml', name: 'RandomForestML', component: ComingSoon, meta: { parentTitle: '机器学习算法', title: '随机森林' } },
-      { path: 'machine-learning/svm', name: 'SVM', component: ComingSoon, meta: { parentTitle: '机器学习算法', title: 'SVM' } },
-      { path: 'machine-learning/knn', name: 'KNN', component: ComingSoon, meta: { parentTitle: '机器学习算法', title: 'KNN' } },
-      { path: 'machine-learning/ensemble', name: 'Ensemble', component: ComingSoon, meta: { parentTitle: '机器学习算法', title: '机器集成' } },
+      // AI算法
+      { path: 'machine-learning/神经网络模型', name: '神经网络模型', component: ComingSoon, meta: { parentTitle: 'AI算法', title: '神经网络模型' } },
+      { path: 'machine-learning/lightgbm', name: 'LightGBM', component: ComingSoon, meta: { parentTitle: 'AI算法', title: 'LightGBM' } },
+      { path: 'machine-learning/catboost', name: 'CatBoost', component: ComingSoon, meta: { parentTitle: 'AI算法', title: 'CatBoost' } },
+      { path: 'machine-learning/decision-tree', name: 'DecisionTree', component: ComingSoon, meta: { parentTitle: 'AI算法', title: '决策树' } },
+      { path: 'machine-learning/random-forest-ml', name: 'RandomForestML', component: ComingSoon, meta: { parentTitle: 'AI算法', title: '随机森林' } },
+      { path: 'machine-learning/svm', name: 'SVM', component: ComingSoon, meta: { parentTitle: 'AI算法', title: 'SVM' } },
+      { path: 'machine-learning/knn', name: 'KNN', component: ComingSoon, meta: { parentTitle: 'AI算法', title: 'KNN' } },
+      { path: 'machine-learning/ensemble', name: 'Ensemble', component: ComingSoon, meta: { parentTitle: 'AI算法', title: '机器集成' } },
 
       // 复杂专题
       { path: 'advanced-topics/interaction-model', name: 'InteractionModel', component: ComingSoon, meta: { parentTitle: '复杂专题', title: '交互模型' } },
