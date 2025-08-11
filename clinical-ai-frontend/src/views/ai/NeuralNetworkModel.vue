@@ -70,25 +70,25 @@
             >
           </div>
           <!-- 诊断结果展示 -->
-<div class="result-group">
-  <!-- 第一行：诊断结果 -->
-  <div class="result-row">
-    <span class="result-title">诊断结果：</span>
-    <span 
-      class="result-value" 
-      :class="{ positive: diagnosisResult.includes('阳性') }"
-    >
-      {{ diagnosisResult || '待运行' }}
-    </span>
-  </div>
-  <!-- 第二行：判断依据 -->
-  <div class="result-row">
-    <span class="result-title">判断依据：</span>
-    <span class="result-value">
-      {{ judgmentBasis || '待运行' }}
-    </span>
-  </div>
-</div>
+          <div class="result-group">
+            <!-- 第一行：诊断结果 -->
+            <div class="result-row">
+              <span class="result-title">诊断结果：</span>
+              <span 
+                class="result-value" 
+                :class="{ positive: diagnosisResult.includes('阳性') }"
+              >
+                {{ diagnosisResult || '待运行' }}
+              </span>
+            </div>
+            <!-- 第二行：判断依据 -->
+            <div class="result-row">
+              <span class="result-title">判断依据：</span>
+              <span class="result-value">
+                {{ judgmentBasis || '待运行' }}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -135,14 +135,16 @@ const runModelPrediction = async () => {
   }
   isLoading.value = true;
   try {
-    // 调用后端预测接口
-    const response = await axios.post(`${API_BASE_URL}/predict/${patientId.value}`);
+    // 调用后端预测接口，增加超时设置
+    const response = await axios.post(`${API_BASE_URL}/predict/${patientId.value}`, {}, {
+      timeout: 30000 // 30秒超时设置，避免大图片处理被中断
+    });
     
     // 更新诊断结果和处理后的图片
     diagnosisResult.value = response.data.diagnosis;
     judgmentBasis.value = response.data.basis;
     
-    // 处理后图片是 base64 编码，需要转换为可显示的 URL
+    // 处理后图片是 base64 编码，转换为可显示的 URL
     processedImageUrl.value = `data:image/jpeg;base64,${response.data.processed_image}`;
   } catch (error) {
     console.error('诊断失败:', error);
@@ -160,7 +162,7 @@ const runModelPrediction = async () => {
 .page-container {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f5f7fa;
-  padding: 5px;
+  padding: 20px;
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -185,16 +187,16 @@ const runModelPrediction = async () => {
   min-width: 400px;
   box-sizing: border-box;
   display: flex;
-  flex-direction: column; /* 让内容垂直排列 */
-  position: relative; 
-  height:870px;
+  flex-direction: column;
+  position: relative;
+  height:850px;
 }
 
 /* 内容包裹器 */
 .content-wrapper {
   display: flex;
   flex-direction: column;
-  flex: 1; /* 让内容区域占满卡片高度 */
+  flex: 1;
 }
 
 /* 模块标题 */
@@ -282,17 +284,22 @@ const runModelPrediction = async () => {
   line-height: 1.5;
 }
 
-/* 图片容器 */
+/* 图片容器 - 确保图片居中显示，统一两侧内边距等样式 */
 .image-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1; /* 让图片区域占满剩余空间，卡片会随内容延伸 */
+  width: 100%;
+  height: 510px; /* 与占位框高度一致 */
   margin-bottom: 24px;
-  min-height: 500px; /* 确保最小高度，内容多则自动增高 */
-  }
+  padding: 0 10px; /* 新增统一内边距，可根据实际微调 */
+  box-sizing: border-box; /* 确保内边距不影响宽度计算 */
+  position:absolute;
+  top:220px;
+  left:-5px;
+}
 
-/* 图片占位符 */
+/* 图片占位符 - 固定尺寸，移除绝对定位 */
 .image-placeholder {
   width: 100%;
   max-width: 600px;
@@ -301,47 +308,48 @@ const runModelPrediction = async () => {
   border-radius: 8px;
   background-color: #f7fafc;
   transition: all 0.2s;
-  position: absolute;
-  top: 230px; 
-  /* 距离父容器顶部 50px */
-  left: 45px; 
+  box-sizing: border-box; /* 确保边框、内边距不影响尺寸 */
+
 }
 .image-placeholder:hover {
   border-color: #90cdf4;
   background-color: #edf2f7;
 }
 
-/* 实际图片展示 */
+/* 实际图片展示 - 与占位框尺寸完全匹配，统一盒模型 */
 .display-image {
   width: 100%;
-  max-width: 500px;
-  height: 400px;
-  object-fit: contain;
+  max-width: 600px; /* 与占位框最大宽度一致 */
+  height: 510px; /* 与占位框高度一致 */
+  object-fit: contain; /* 保持比例，完整显示在框内 */
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   background-color: #f7fafc;
   padding: 8px;
-  box-sizing: border-box;
+  box-sizing: border-box; /* 确保内边距不影响宽度 */
 }
 
 /* 诊断结果展示 */
 .result-group {
-  margin-top: 20px; /* 结果区域靠下 */
+  margin-top: auto; /* 结果区域靠下 */
   padding-top: 18px;
   border-top: 1px solid #edf2f7;
 }
 
+.result-row {
+  margin-bottom: 8px; /* 两行之间的间距 */
+}
+
 .result-title {
   font-weight: 600;
-  margin-bottom: 6px;
   color: #2d3748;
   font-size: 15px;
 }
 
 .result-value {
-  margin-bottom: 14px;
   color: #4a5568;
   line-height: 1.6;
+  margin-left: 6px;
 }
 
 /* 加载中提示 */
@@ -363,11 +371,14 @@ const runModelPrediction = async () => {
 /* 响应式调整 */
 @media (max-width: 768px) {
   .image-container {
-    min-height: 300px;
+    height: 300px;
   }
   .image-placeholder,
   .display-image {
     height: 300px;
+  }
+  .section {
+    min-width: 100%;
   }
 }
 </style>
