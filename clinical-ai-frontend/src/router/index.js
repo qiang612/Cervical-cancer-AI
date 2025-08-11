@@ -1,8 +1,12 @@
 // src/router/index.js
+
 import { createRouter, createWebHistory } from 'vue-router'
 import BaseLayout from '../layouts/BaseLayout.vue'
 
-// 为所有页面创建一个简单的 "开发中" 占位组件引用
+// --- 修改点 1: 确保 NeuralNetworkModel 组件被正确导入 ---
+import NeuralNetworkModel from '../views/ai/NeuralNetworkModel.vue'
+
+// 为所有其他页面创建一个简单的 "开发中" 占位组件引用
 const ComingSoon = () => import('../views/ComingSoon.vue')
 
 const routes = [
@@ -63,7 +67,13 @@ const routes = [
       { path: 'cross-validation/bootstrap', name: 'BootstrapCV', component: ComingSoon, meta: { parentTitle: '交叉验证', title: 'Boot自助法' } },
 
       // AI算法
-      { path: 'machine-learning/神经网络模型', name: '神经网络模型', component: ComingSoon, meta: { parentTitle: 'AI算法', title: '神经网络模型' } },
+      // --- 修改点 2: 将下面的路由指向我们创建的组件 ---
+      { 
+        path: 'ai/neural-network-model', // 使用更符合URL规范的路径
+        name: 'NeuralNetworkModel',      // 使用组件名作为路由名
+        component: NeuralNetworkModel,  // 将 component 从 ComingSoon 修改为 NeuralNetworkModel
+        meta: { parentTitle: 'AI算法', title: '神经网络模型' } 
+      },
       { path: 'machine-learning/lightgbm', name: 'LightGBM', component: ComingSoon, meta: { parentTitle: 'AI算法', title: 'LightGBM' } },
       { path: 'machine-learning/catboost', name: 'CatBoost', component: ComingSoon, meta: { parentTitle: 'AI算法', title: 'CatBoost' } },
       { path: 'machine-learning/decision-tree', name: 'DecisionTree', component: ComingSoon, meta: { parentTitle: 'AI算法', title: '决策树' } },
