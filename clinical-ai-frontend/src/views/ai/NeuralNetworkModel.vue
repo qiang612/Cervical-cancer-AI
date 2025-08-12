@@ -162,7 +162,7 @@ const runModelPrediction = async () => {
 .page-container {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f5f7fa;
-  padding: 20px;
+  padding:20px;
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -170,7 +170,7 @@ const runModelPrediction = async () => {
 /* 左右布局容器 */
 .layout-row {
   display: flex;
-  gap: 24px;
+  gap: 30px;
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
@@ -189,7 +189,9 @@ const runModelPrediction = async () => {
   display: flex;
   flex-direction: column;
   position: relative;
-  height:850px;
+  height:865px;
+  margin-left:-10px;
+  margin-top:-10px;
 }
 
 /* 内容包裹器 */
