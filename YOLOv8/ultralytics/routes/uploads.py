@@ -1,14 +1,13 @@
 # routes/uploads.py
-
 from flask import Blueprint, send_from_directory
 from config import Config
+import os
 
 uploads_bp = Blueprint('uploads', __name__)
 
-@uploads_bp.route('/uploads/<path:filename>')
-def serve_upload(filename):
-    """
-    提供对上传文件的访问。
-    例如: /uploads/1/image.jpg 将会从 UPLOAD_FOLDER/1/image.jpg 提供文件
-    """
-    return send_from_directory(Config.UPLOAD_FOLDER, filename)
+# 使用更灵活的路由来处理嵌套目录
+@uploads_bp.route('/uploads/<path:subpath>')
+def serve_upload(subpath):
+    """提供对上传文件的访问"""
+    # send_from_directory 会安全地处理路径
+    return send_from_directory(Config.UPLOAD_FOLDER, subpath)

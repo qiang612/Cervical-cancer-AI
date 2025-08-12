@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 from .user import db
+from config import Config
 
 
 class Image(db.Model):
@@ -16,9 +17,8 @@ class Image(db.Model):
 
     def to_dict(self):
         # 从 UPLOAD_FOLDER 的绝对路径中，提取出相对路径部分
-        from config import Config
         relative_path = os.path.relpath(self.file_path, Config.UPLOAD_FOLDER)
-        # 替换 Windows 的反斜杠为 URL 的正斜杠
+        # 将 Windows 的反斜杠 \ 替换为 URL 的正斜杠 /
         url_path = relative_path.replace('\\', '/')
         return {
             'id': self.id,
@@ -27,7 +27,7 @@ class Image(db.Model):
             'filePath': f'/uploads/{url_path}',
             'format': self.format,
             'size': self.size,
-            'created_at': self.created_at.isoformat()
+            'createdAt': self.created_at.isoformat()
         }
 
     def delete_file(self):

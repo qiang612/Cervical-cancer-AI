@@ -170,13 +170,497 @@ const deleteImage = async (imageId) => {
 </script>
 
 <style scoped>
+/* 基础容器容器样式 */
+.bg-white {
+  background-color: #ffffff;
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+/* 顶部头部样式 */
+.flex {
+  display: flex;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.pb-4 {
+  padding-bottom: 1rem;
+}
+
+.border-b {
+  border-bottom-width: 1px;
+  border-bottom-color: #e5e7e9;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+/* 标题编辑区域 */
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.font-bold {
+  font-weight: 600;
+}
+
+.text-gray-800 {
+  color: #1f2937;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* 输入框样式 */
+.border-b-2 {
+  border-bottom-width: 2px;
+}
+
+.border-blue-500 {
+  border-color: #3b82f6;
+}
+
+.focus\:outline-none:focus {
+  outline: none;
+}
+
+/* 按钮样式 */
 .btn-primary {
-    @apply flex items-center bg-blue-600 text-white px-3 py-2 rounded-md shadow-sm hover:bg-blue-700 transition text-sm;
+  @apply flex flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-blue-700 transition-all duration-200 text-sm font-medium;
 }
+
 .btn-secondary {
-    @apply flex items-center bg-gray-200 text-gray-700 px-3 py-2 rounded-md shadow-sm hover:bg-gray-300 transition text-sm;
+  @applyapply flex flex items-center bg-gray-100 text-gray-700 px-4 py-2 rounded-md shadow-sm hover:bg-gray-200 transition-all duration-200 text-sm font-medium;
 }
+
 .btn-danger {
-    @apply flex items-center bg-red-600 text-white px-3 py-2 rounded-md shadow-sm hover:bg-red-700 transition text-sm;
+  @apply flex items-center bg-red-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-700 transition-all duration-200 text-sm font-medium;
 }
+
+/* 按钮图标标样式 */
+.h-4 {
+  height: 1rem;
+}
+
+.w-4 {
+  width: 1rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+/* 搜索和筛选区域 */
+.grid {
+  display: grid;
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.md\:grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.items-end {
+  align-items: end;
+}
+
+.col-span-1 {
+  grid-column: span 1 / span 1;
+}
+
+.md\:col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+.block {
+  display: block;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.text-gray-700 {
+  color: #374151;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+.relative {
+  position: relative;
+}
+
+.pl-10 {
+  padding-left: 2.5rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.border-gray-300 {
+  border-color: #d1d5db;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.focus\:ring-blue-500:focus {
+  ring-color: #3b82f6;
+  ring-width: 2px;
+  ring-offset-width: 0px;
+}
+
+.focus\:border-blue-500:focus {
+  border-color: #3b82f6;
+}
+
+.placeholder\:text-gray-400::placeholder {
+  color: #9ca3af;
+}
+
+/* 图片网格区域 */
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.py-10 {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.h-10 {
+  height: 2.5rem;
+}
+
+.w-10 {
+  width: 2.5rem;
+}
+
+.text-blue-600 {
+  color: #3b82f6;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
+.text-gray-500 {
+  color: #6b7280;
+}
+
+/* 图片网格布局 */
+.sm\:grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.md\:grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.lg\:grid-cols-6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.xl\:grid-cols-8 {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+/* 图片卡片样式 */
+.relative {
+  position: relative;
+}
+
+.group {
+  transition: all 0.3s ease;
+}
+
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+.border {
+  border-width: 1px;
+  border-color: #e2e8f0;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+/* 图片卡片悬停效果 */
+.group:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border-color: #cbd5e1;
+}
+
+/* 图片样式 */
+.object-cover {
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.group:hover .object-cover {
+  transform: scale(1.08);
+}
+
+/* 图片覆盖层 */
+.absolute {
+  position: absolute;
+}
+
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.bg-black {
+  background-color: #000000;
+}
+
+.bg-opacity-0 {
+  background-opacity: 0;
+}
+
+.group-hover\:bg-opacity-40:hover {
+  background-opacity: 0.4;
+}
+
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.p-2 {
+  padding: 0.5rem;
+}
+
+/* 图片操作按钮 */
+.justify-end {
+  justify-content: flex-end;
+}
+
+.opacity-0 {
+  opacity: 0;
+}
+
+.group-hover\:opacity-100:hover {
+  opacity: 1;
+}
+
+.transition-opacity {
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.p-1.5 {
+  padding: 0.375rem;
+}
+
+.bg-red-600 {
+  background-color: #dc2626;
+}
+
+.text-white {
+  color: #ffffff;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.hover\:bg-red-700:hover {
+  background-color: #b91c1c;
+}
+
+/* 图片名称标签 */
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bg-black\/50 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.p-1 {
+  padding: 0.25rem;
+}
+
+.rounded-sm {
+  border-radius: 0.125rem;
+}
+
+/* 空状态样式 */
+.py-20 {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+.border-2 {
+  border-width: 2px;
+}
+
+.border-dashed {
+  border-style: dashed;
+}
+
+.h-16 {
+  height: 4rem;
+}
+
+.w-16 {
+  width: 4rem;
+}
+
+.text-gray-400 {
+  color: #9ca3af;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+/* 动画效果 */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 响应式调整 */
+@media (max-width: 1024px) {
+  .lg\:grid-cols-6 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .md\:grid-cols-4 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  
+  .md\:col-span-2 {
+    grid-column: span 1 / span 1;
+  }
+  
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .sm\:grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  
+  .xl\:grid-cols-8 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  
+  .flex-wrap button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 </style>

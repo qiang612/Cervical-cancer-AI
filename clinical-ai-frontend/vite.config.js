@@ -1,33 +1,28 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import path from 'path' // 保留您原来的path模块引入
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
-  // 保留您原来的 plugins 配置
   plugins: [vue()],
-
-  // 保留您原来的 resolve.alias 配置
   resolve: {
     alias: {
-      // 配置@别名指向src目录
       '@': path.resolve(__dirname, './src')
     }
   },
-
-  // ## ADDED: 添加解决跨域问题的 server.proxy 配置 ##
   server: {
-    host: '0.0.0.0', // 允许通过IP地址访问
-    // port: 5174, // 您可以根据需要修改前端开发服务器的端口，如果未指定，Vite会使用默认值
+    host: '0.0.0.0',
     proxy: {
-      // 关键配置：当请求地址以 /api 开头时，触发代理规则
+      // 规则1：所有以 /api 开头的请求，都转发给后端
       '/api': {
-        // 目标是您的后端服务器地址
         target: 'http://localhost:5000',
-        
-        // changeOrigin: true 对于跨域请求至关重要
         changeOrigin: true,
       },
+      // ## FINAL FIX: 添加规则2：所有以 /uploads 开头的请求，也转发给后端 ##
+      '/uploads': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      }
     }
   }
 })
