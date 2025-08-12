@@ -28,7 +28,7 @@ const routes = [
       { 
         path: 'system/intro', 
         name: 'SoftwareIntro', 
-        component: Dashboard, 
+        component: Home, 
         meta: { parentTitle: '登录系统', title: '软件介绍' } 
       },
 
