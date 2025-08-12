@@ -56,7 +56,8 @@ export function deleteDataset(datasetId) {
  * @returns {Promise} 包含复制后新数据集的Promise
  */
 export function copyDataset(datasetId) {
-  return axios.post(`/api/datasets/${datasetId}/copy`)
+  // Post请求的第二个参数是body，这里没有body，所以传null
+  return axios.post(`/api/datasets/${datasetId}/copy`, null)
     .then(response => response.data);
 }
 

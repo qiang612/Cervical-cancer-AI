@@ -1,4 +1,7 @@
 /* src/style.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 body {
   margin: 0; /* 移除 body 的默认外边距 */
   padding: 0;

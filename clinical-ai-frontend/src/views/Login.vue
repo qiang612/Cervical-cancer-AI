@@ -1,54 +1,53 @@
 <template>
   <!-- 外层容器，使内容全屏居中 -->
-  <div class="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+  <div class="login-container">
     <!-- 登录卡片容器 -->
-    <div class="w-full max-w-md bg-white rounded-2xl shadow-lg overflow-hidden">
+    <div class="login-card">
       <!-- 卡片头部 -->
-      <div class="bg-blue-600 p-6 text-white text-center">
-        <h2 class="text-2xl font-bold">临床AI辅助诊断系统</h2>
-        <p class="mt-1 opacity-90">请登录以继续使用</p>
+      <div class="card-header">
+        <h2>临床AI辅助诊断系统</h2>
+        <p>请登录以继续使用</p>
       </div>
       
       <!-- 登录表单 -->
-      <div class="p-6">
-        <form @submit.prevent="handleLogin" class="space-y-5">
+      <div class="card-body">
+        <form @submit.prevent="handleLogin" class="login-form">
+          <!-- 错误提示 -->
+          <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+          
           <!-- 用户名输入 -->
-          <div>
-            <label for="username" class="block text-sm font-medium text-gray-700 mb-1">用户名</label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                <i class="fa fa-user"></i>
-              </div>
+          <div class="form-group">
+            <label for="username">用户名</label>
+            <div class="input-wrapper">
+              <i class="fa fa-user icon"></i>
               <input
                 type="text"
                 id="username"
                 v-model="username"
                 required
                 placeholder="请输入用户名"
-                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+                class="form-input"
               >
             </div>
           </div>
           
           <!-- 密码输入 -->
-          <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                <i class="fa fa-lock"></i>
-              </div>
+          <div class="form-group">
+            <label for="password">密码</label>
+            <div class="input-wrapper">
+              <i class="fa fa-lock icon"></i>
               <input
-                type="password"
+                :type="showPassword ? 'text' : 'password'"
                 id="password"
                 v-model="password"
                 required
                 placeholder="请输入密码"
-                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+                class="form-input"
               >
               <button
                 type="button"
                 @click="showPassword = !showPassword"
-                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+                class="toggle-btn"
               >
                 <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
               </button>
@@ -56,30 +55,26 @@
           </div>
           
           <!-- 记住密码和忘记密码 -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
+          <div class="form-actions">
+            <div class="remember-me">
               <input
                 id="remember"
                 type="checkbox"
                 v-model="rememberMe"
-                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                class="checkbox"
               >
-              <label for="remember" class="ml-2 block text-sm text-gray-700">
-                记住密码
-              </label>
+              <label for="remember">记住密码</label>
             </div>
-            <a href="#" class="text-sm text-blue-600 hover:text-blue-800">
-              忘记密码?
-            </a>
+            <a href="#" class="forgot-link">忘记密码?</a>
           </div>
           
           <!-- 登录按钮 -->
           <button
             type="submit"
             :disabled="isLoading"
-            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed"
+            class="login-btn"
           >
-            <span v-if="isLoading" class="flex items-center">
+            <span v-if="isLoading" class="loading-indicator">
               <i class="fa fa-spinner fa-spin mr-2"></i> 登录中...
             </span>
             <span v-else>登录</span>
@@ -148,4 +143,214 @@ const initForm = () => {
 // 初始化表单
 initForm();
 </script>
+
+<style scoped>
+/* 基础样式重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* 登录容器 - 全屏居中 */
+.login-container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* 登录卡片样式 */
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* 卡片头部样式 */
+.card-header {
+  background-color: #2563eb;
+  padding: 30px 20px;
+  text-align: center;
+  color: white;
+}
+
+.card-header h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.card-header p {
+  opacity: 0.9;
+  font-size: 14px;
+}
+
+/* 卡片主体样式 */
+.card-body {
+  padding: 30px 20px;
+}
+
+/* 表单样式 */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 表单组样式 */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+/* 输入框容器 */
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* 输入框样式 */
+.form-input {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.15s ease-in-out;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* 图标样式 */
+.icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 16px;
+}
+
+/* 密码切换按钮 */
+.toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 16px;
+  transition: color 0.15s ease-in-out;
+}
+
+.toggle-btn:hover {
+  color: #4b5563;
+}
+
+/* 表单操作区 */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+}
+
+/* 记住密码 */
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  color: #2563eb;
+  border-color: #d1d5db;
+  border-radius: 4px;
+}
+
+.remember-me label {
+  font-size: 13px;
+  color: #4b5563;
+}
+
+/* 忘记密码链接 */
+.forgot-link {
+  font-size: 13px;
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.15s ease-in-out;
+}
+
+.forgot-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* 登录按钮 */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.login-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background-color: #2563eb;
+}
+
+/* 加载指示器 */
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 错误消息 */
+.error-message {
+  color: #dc2626;
+  font-size: 13px;
+  padding: 8px 12px;
+  background-color: #fee2e2;
+  border-radius: 6px;
+  text-align: center;
+}
+</style>
     

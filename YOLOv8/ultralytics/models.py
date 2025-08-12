@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-
+from werkzeug.security import generate_password_hash, check_password_hash
 db = SQLAlchemy()
 
 
@@ -13,6 +13,13 @@ class User(db.Model):
 
     # 关系
     datasets = db.relationship('Dataset', backref='owner', lazy=True)
+    def set_password(self, password):
+        """创建哈希密码"""
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        """检查哈希密码"""
+        return check_password_hash(self.password_hash, password)
 
 
 class Dataset(db.Model):
