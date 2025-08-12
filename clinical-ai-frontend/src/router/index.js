@@ -2,10 +2,13 @@
 
 import { createRouter, createWebHistory } from 'vue-router'
 import BaseLayout from '../layouts/BaseLayout.vue'
+import Login from '../views/Login.vue';  // 新增：导入Login组件
+// 导入Home组件（确保路径正确）
+import Home from '../views/Home.vue';    // 新增：导入Home组件
 
 // --- 修改点 1: 确保 NeuralNetworkModel 组件被正确导入 ---
 import NeuralNetworkModel from '../views/ai/NeuralNetworkModel.vue'
-
+import DataPreparation from '../views/DataPreparation.vue';
 // 为所有其他页面创建一个简单的 "开发中" 占位组件引用
 const ComingSoon = () => import('../views/ComingSoon.vue')
 
@@ -15,9 +18,19 @@ const routes = [
     component: BaseLayout,
     redirect: '/system/intro',
     children: [
-      // 登录系统
-      { path: 'system/login', name: 'Login', component: ComingSoon, meta: { parentTitle: '登录系统', title: '登录界面' } },
-      { path: 'system/intro', name: 'SoftwareIntro', component: () => import('../views/Dashboard.vue'), meta: { parentTitle: '登录系统', title: '软件介绍' } },
+      // 登录系统相关路由
+      { 
+        path: 'system/login', 
+        name: 'SystemLogin',  // 修改：避免与根路由的Login重名
+        component: Login,     // 修改：使用导入的Login组件
+        meta: { parentTitle: '登录系统', title: '登录界面' } 
+      },
+      { 
+        path: 'system/intro', 
+        name: 'SoftwareIntro', 
+        component: Dashboard, 
+        meta: { parentTitle: '登录系统', title: '软件介绍' } 
+      },
 
       // 样本量计算
       { path: 'sample-size-calculation', name: 'SampleSizeCalculation', component: ComingSoon, meta: { parentTitle: '样本量计算', title: '样本量计算' } },
@@ -32,7 +45,23 @@ const routes = [
       { path: 'data-cleaning/non-numeric', name: 'NonNumeric', component: ComingSoon, meta: { parentTitle: '数据清洗', title: '非数值列检测' } },
 
       // 数据准备
-      { path: 'data-preparation', name: 'DataPreparation', component: ComingSoon, meta: { parentTitle: '数据准备', title: '数据准备' } },
+      {
+        path: '/login',
+        name: 'Login',
+        component: Login
+      },
+      {
+        path: '/home',
+        name: 'Home',
+        component: Home,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: '/data-preparation',
+        name: 'DataPreparation',
+        component: DataPreparation,
+        meta: { requiresAuth: true }
+      },
 
       // 基线分析
       { path: 'baseline-analysis', name: 'BaselineAnalysis', component: () => import('../views/BaselineAnalysis.vue'), meta: { parentTitle: '基线分析', title: '基线分析' } },
@@ -90,8 +119,28 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes
+});
+// 路由守卫实现
+function requireAuth(to, from, next) {
+  // 这里应该根据你的Vuex存储检查用户是否已登录
+  const isAuthenticated = localStorage.getItem('token') !== null; // 简单示例
+  
+  if (isAuthenticated) {
+    next(); // 已登录，继续导航
+  } else {
+    next('/system/login'); // 未登录，重定向到登录页
+  }
+}
+
+// 添加路由守卫
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    requireAuth(to, from, next);
+  } else {
+    next();
+  }
 });
 
 export default router;
