@@ -88,60 +88,45 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+// ## ADDED: 导入 useStore 来访问 Vuex ##
+import { useStore } from 'vuex';
 
 // 表单数据
-const username = ref('');
-const password = ref('');
+const username = ref('admin'); // 可以预填方便测试
+const password = ref('admin'); // 可以预填方便测试
 const rememberMe = ref(true);
 const showPassword = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref('');
 
+// ## ADDED: 获取 Vuex store 和 router 实例 ##
+const store = useStore();
 const router = useRouter();
 
-// 登录处理
+// ## FIX: 修改为真实的登录处理逻辑 ##
 const handleLogin = async () => {
   isLoading.value = true;
   errorMessage.value = '';
-  
+
   try {
-    // 模拟登录API调用
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // 1. 调用 Vuex action 来执行登录
+    await store.dispatch('user/login', {
+      username: username.value,
+      password: password.value,
+    });
     
-    // 这里应该是实际的登录验证逻辑
-    if (username.value && password.value) {
-      // 存储登录状态
-      localStorage.setItem('token', 'dummy-token');
-      if (!rememberMe.value) {
-        // 如果不记住密码，可以设置短期存储
-        sessionStorage.setItem('username', username.value);
-      } else {
-        localStorage.setItem('username', username.value);
-      }
-      
-      // 登录成功，重定向到首页
-      router.push('/home');
-    } else {
-      errorMessage.value = '请输入用户名和密码';
-    }
+    // 2. Vuex action 成功后会自动跳转，这里不需要额外操作
+    //    如果需要，可以添加成功提示
+    //    ElMessage.success('登录成功!'); 
+
   } catch (err) {
-    errorMessage.value = '登录失败，请检查用户名和密码';
+    // 3. 如果 Vuex action 抛出错误，在这里捕获并显示
+    errorMessage.value = err.response?.data?.message || '登录失败，请重试';
     console.error('登录错误:', err);
   } finally {
     isLoading.value = false;
   }
 };
-
-// 页面加载时恢复用户名（如果记住密码）
-const initForm = () => {
-  const savedUsername = rememberMe.value ? localStorage.getItem('username') : sessionStorage.getItem('username');
-  if (savedUsername) {
-    username.value = savedUsername;
-  }
-};
-
-// 初始化表单
-initForm();
 </script>
 
 <style scoped>

@@ -4,7 +4,7 @@ import router from '@/router';
 // 封装一个独立的登录API请求函数
 function loginApi(loginData) {
   // 注意：这里的 URL 应该和你后端的登录路由完全一致
-  return axios.post('/auth/login', loginData);
+  return axios.post('/api/auth/login', loginData);
 }
 
 const state = {

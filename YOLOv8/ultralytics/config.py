@@ -4,26 +4,29 @@ from datetime import timedelta
 
 class Config:
     # 数据库配置
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///medical_datasets.db'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///dataset_manager.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # JWT配置
-    JWT_SECRET_KEY = 'your-secret-key-here'  # 生产环境需更换
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=7)
+    # 图片存储路径
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', os.path.join(os.getcwd(), 'uploads'))
 
-    # 路径配置
+    # 允许的图片格式
+    ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'tiff', 'dcm', 'gif'}
+
+    # 最大上传文件大小 (10MB)
+    MAX_CONTENT_LENGTH = 10 * 1024 * 1024
+
+    # 安全配置
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key')  # 生产环境应更换为安全的密钥
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
+
+    # 模型相关配置 - 新增/保留的部分
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
-    PATIENT_DATA_DIR = os.path.join(BASE_DIR, 'patient_data')
+    MODEL_PATH = os.environ.get('MODEL_PATH',
+                                os.path.join(BASE_DIR, 'runs/detect/cervical_train2/weights/best.pt'))
+    PATIENT_DATA_DIR = os.environ.get('PATIENT_DATA_DIR',
+                                      os.path.join(BASE_DIR, 'patient_data'))
 
-    # 文件上传限制
-    MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10MB
-
-    # 模型路径
-    MODEL_PATH = os.path.join(BASE_DIR, 'runs/detect/cervical_train2/weights/best.pt')
-
-    # 确保目录存在
-    @staticmethod
-    def ensure_directories():
-        os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)
-        os.makedirs(Config.PATIENT_DATA_DIR, exist_ok=True)
+    # 创建所需目录（如果不存在）
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    os.makedirs(PATIENT_DATA_DIR, exist_ok=True)

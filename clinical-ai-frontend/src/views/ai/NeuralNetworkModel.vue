@@ -97,9 +97,11 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
+// ## FIX 1: 导入项目中经过配置的axios实例，而不是原始的axios库 ##
+import axios from '@/utils/axios';
 
-const API_BASE_URL = 'http://127.0.0.1:5000';
+// ## DELETED: 移除硬编码的API地址，让vite.config.js的代理生效 ##
+// const API_BASE_URL = 'http://127.0.0.1:5000'; 
 
 const patientId = ref('');
 const originalImageUrl = ref('');
@@ -114,11 +116,13 @@ const fetchPatientImage = async () => {
     return;
   }
   try {
-    // 调用后端接口获取患者图片
-    const response = await axios.get(`${API_BASE_URL}/patient_image/${patientId.value}`, { 
+    // ## FIX 2: 使用正确的URL，包含 /api 前缀 ##
+    const response = await axios.get(`/api/patient_image/${patientId.value}`, { 
+      // 注意：我们的定制axios实例会自动提取response.data，但对于blob类型需要特殊处理
+      // 为了简化，我们暂时让这个请求直接获取blob并创建URL
       responseType: 'blob' 
     });
-    originalImageUrl.value = URL.createObjectURL(response.data);
+    originalImageUrl.value = URL.createObjectURL(response); // response现在直接是blob数据
     processedImageUrl.value = '';
     diagnosisResult.value = '';
     judgmentBasis.value = '';
@@ -135,17 +139,18 @@ const runModelPrediction = async () => {
   }
   isLoading.value = true;
   try {
-    // 调用后端预测接口，增加超时设置
-    const response = await axios.post(`${API_BASE_URL}/predict/${patientId.value}`, {}, {
-      timeout: 30000 // 30秒超时设置，避免大图片处理被中断
+    // ## FIX 3: 使用正确的URL，包含 /api 前缀 ##
+    // 我们的定制axios实例会自动提取response.data，所以后面直接使用 response.diagnosis 即可
+    const response = await axios.post(`/api/predict/${patientId.value}`, {}, {
+      timeout: 60000 // 延长超时到60秒，以防模型处理时间过长
     });
     
     // 更新诊断结果和处理后的图片
-    diagnosisResult.value = response.data.diagnosis;
-    judgmentBasis.value = response.data.basis;
+    diagnosisResult.value = response.diagnosis;
+    judgmentBasis.value = response.basis;
     
     // 处理后图片是 base64 编码，转换为可显示的 URL
-    processedImageUrl.value = `data:image/jpeg;base64,${response.data.processed_image}`;
+    processedImageUrl.value = `data:image/jpeg;base64,${response.processed_image}`;
   } catch (error) {
     console.error('诊断失败:', error);
     alert('AI诊断失败，请检查后端服务！');
