@@ -10,9 +10,17 @@
             <p class="version-text">V2.0.2</p>
           </div>
         </div>
-        <button class="login-button" @click="$router.push('/login')">
+
+        <button v-if="!isAuthenticated" class="login-button" @click="$router.push('/login')">
           登录系统
         </button>
+        <div v-else class="user-actions">
+          <span class="welcome-text">欢迎, {{ currentUser?.username || '用户' }}</span>
+          <button class="logout-button" @click="handleLogout">
+            退出登录
+          </button>
+        </div>
+
       </div>
     </header>
 
@@ -308,7 +316,26 @@
 </template>
 
 <script setup>
-// 此页面为登录前的介绍页面，无需复杂逻辑
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+
+// ## ADDED: 添加完整的脚本逻辑 ##
+
+// 1. 获取 Vuex store 和 router 实例
+const store = useStore();
+const router = useRouter();
+
+// 2. 创建计算属性，从 Vuex store 中获取登录状态和用户信息
+//    'user/isAuthenticated' 和 'user/currentUser' 对应你的 store/modules/user.js 中的 getters
+const isAuthenticated = computed(() => store.getters['user/isAuthenticated']);
+const currentUser = computed(() => store.getters['user/currentUser']);
+
+// 3. 定义退出登录的处理函数
+const handleLogout = () => {
+  // 调用 Vuex store 中定义的 logout action
+  store.dispatch('user/logout');
+};
 </script>
 
 <style scoped>
@@ -746,5 +773,35 @@ html {
 section {
   scroll-margin-top: 80px;
 }
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.welcome-text {
+  font-size: 15px;
+  color: #4b5563; /* 深灰色文字 */
+  font-weight: 500;
+}
+
+.logout-button {
+  background-color: transparent;
+  color: #6b7280; /* 中灰色文字 */
+  border: 1px solid #d1d5db; /* 浅灰色边框 */
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+  color: #1f2937; /* 深色文字 */
+  background-color: #f3f4f6; /* 浅灰色背景 */
+  border-color: #9ca3af;
+}
+
 </style>
     

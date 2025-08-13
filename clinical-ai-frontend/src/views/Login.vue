@@ -1,21 +1,15 @@
 <template>
-  <!-- 外层容器，使内容全屏居中 -->
   <div class="login-container">
-    <!-- 登录卡片容器 -->
     <div class="login-card">
-      <!-- 卡片头部 -->
       <div class="card-header">
         <h2>临床AI辅助诊断系统</h2>
-        <p>请登录以继续使用</p>
+        <p>{{ isLoginView ? '请登录以继续使用' : '创建您的新账户' }}</p>
       </div>
       
-      <!-- 登录表单 -->
       <div class="card-body">
-        <form @submit.prevent="handleLogin" class="login-form">
-          <!-- 错误提示 -->
+        <form v-if="isLoginView" @submit.prevent="handleLogin" class="login-form">
           <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
           
-          <!-- 用户名输入 -->
           <div class="form-group">
             <label for="username">用户名</label>
             <div class="input-wrapper">
@@ -31,7 +25,6 @@
             </div>
           </div>
           
-          <!-- 密码输入 -->
           <div class="form-group">
             <label for="password">密码</label>
             <div class="input-wrapper">
@@ -54,7 +47,6 @@
             </div>
           </div>
           
-          <!-- 记住密码和忘记密码 -->
           <div class="form-actions">
             <div class="remember-me">
               <input
@@ -68,7 +60,6 @@
             <a href="#" class="forgot-link">忘记密码?</a>
           </div>
           
-          <!-- 登录按钮 -->
           <button
             type="submit"
             :disabled="isLoading"
@@ -80,49 +71,86 @@
             <span v-else>登录</span>
           </button>
         </form>
+
+        <form v-else @submit.prevent="handleRegister" class="login-form">
+          <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+          <div class="form-group">
+            <label for="reg-username">用户名</label>
+            <input v-model="registerForm.username" type="text" required placeholder="设置用户名" class="form-input">
+          </div>
+          <div class="form-group">
+            <label for="reg-email">邮箱</label>
+            <input v-model="registerForm.email" type="email" required placeholder="输入您的邮箱" class="form-input">
+          </div>
+          <div class="form-group">
+            <label for="reg-password">密码</label>
+            <input v-model="registerForm.password" type="password" required placeholder="设置密码" class="form-input">
+          </div>
+          <button type="submit" :disabled="isLoading" class="login-btn">
+            <span v-if="isLoading">注册中...</span>
+            <span v-else>注册</span>
+          </button>
+        </form>
+
+        <div class="toggle-view">
+          <a href="#" @click.prevent="isLoginView = !isLoginView">
+            {{ isLoginView ? '还没有账户？立即注册' : '已有账户？前往登录' }}
+          </a>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-// ## ADDED: 导入 useStore 来访问 Vuex ##
+import { ref, reactive } from 'vue';
 import { useStore } from 'vuex';
+import axios from '@/utils/axios';
 
-// 表单数据
-const username = ref('admin'); // 可以预填方便测试
-const password = ref('admin'); // 可以预填方便测试
-const rememberMe = ref(true);
-const showPassword = ref(false);
-const isLoading = ref(false);
-const errorMessage = ref('');
+// 视图切换
+const isLoginView = ref(true);
 
-// ## ADDED: 获取 Vuex store 和 router 实例 ##
+// --- 登录逻辑 ---
+const username = ref('admin');
+const password = ref('admin');
 const store = useStore();
-const router = useRouter();
+const errorMessage = ref('');
+const isLoading = ref(false);
+// ## ADDED: 补上 template 中需要的变量定义 ##
+const showPassword = ref(false);
+const rememberMe = ref(true);
 
-// ## FIX: 修改为真实的登录处理逻辑 ##
 const handleLogin = async () => {
   isLoading.value = true;
   errorMessage.value = '';
-
   try {
-    // 1. 调用 Vuex action 来执行登录
     await store.dispatch('user/login', {
       username: username.value,
       password: password.value,
     });
-    
-    // 2. Vuex action 成功后会自动跳转，这里不需要额外操作
-    //    如果需要，可以添加成功提示
-    //    ElMessage.success('登录成功!'); 
-
   } catch (err) {
-    // 3. 如果 Vuex action 抛出错误，在这里捕获并显示
     errorMessage.value = err.response?.data?.message || '登录失败，请重试';
-    console.error('登录错误:', err);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// --- 注册逻辑 ---
+const registerForm = reactive({
+  username: '',
+  email: '',
+  password: '',
+});
+
+const handleRegister = async () => {
+  isLoading.value = true;
+  errorMessage.value = '';
+  try {
+    const response = await axios.post('/api/auth/register', registerForm);
+    alert('注册成功！请前往登录。');
+    isLoginView.value = true;
+  } catch (err) {
+    errorMessage.value = err.response?.data?.message || '注册失败，请重试';
   } finally {
     isLoading.value = false;
   }
@@ -336,6 +364,15 @@ const handleLogin = async () => {
   background-color: #fee2e2;
   border-radius: 6px;
   text-align: center;
+}
+.toggle-view {
+  text-align: center;
+  margin-top: 20px;
+}
+.toggle-view a {
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 14px;
 }
 </style>
     

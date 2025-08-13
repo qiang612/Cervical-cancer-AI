@@ -10,10 +10,10 @@ def add_default_user():
     """
     创建一个默认的管理员用户，如果他不存在的话。
     """
-    USERNAME = 'admin'
-    PASSWORD = 'admin'
+    USERNAME = 'admin1'
+    PASSWORD = 'admin1'
     # ## NOTE: User 模型需要 email 字段，我们在这里提供一个默认值 ##
-    EMAIL = 'admin@example.com'
+    EMAIL = 'admin1@example.com'
 
     # 1. 创建 Flask 应用实例
     app = create_app()

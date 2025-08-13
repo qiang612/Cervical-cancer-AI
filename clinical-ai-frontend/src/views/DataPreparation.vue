@@ -230,7 +230,6 @@
                       <el-checkbox
                         :model-value="selectedImages.includes(image.id)"
                         @change="() => handleImageSelection(image.id)"
-                        :label="image.id"
                       />
                     </div>
                     <div class="image-container">
@@ -258,54 +257,216 @@
       </div>
     </div>
 
-    <!-- 对话框组件 -->
-    <el-dialog 
-      title="创建新数据集" 
-      v-model="showCreateDatasetDialog" 
+    <!-- 创建数据集对话框 -->
+    <el-dialog
+      title="创建新数据集"
+      v-model="showCreateDatasetDialog"
       :before-close="handleCloseCreateDialog"
       width="500px"
     >
-        </el-dialog>
+      <el-form :model="newDataset" :rules="datasetRules" ref="createDatasetFormRef" label-position="top">
+        <el-form-item label="数据集名称" prop="name">
+          <el-input v-model="newDataset.name" placeholder="请输入数据集名称" />
+        </el-form-item>
 
-    <el-dialog 
+        <el-form-item label="任务类型" prop="taskType">
+          <el-select v-model="newDataset.taskType" placeholder="请选择任务类型" style="width: 100%;">
+            <el-option label="目标检测" value="detection" />
+            <el-option label="图像分类" value="classification" />
+            <el-option label="语义分割" value="segmentation" />
+            <el-option label="姿态估计" value="pose" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="影像类型" prop="imageType">
+          <el-select v-model="newDataset.imageType" placeholder="请选择影像类型" style="width: 100%;">
+            <el-option label="X光片" value="xray" />
+            <el-option label="CT扫描" value="ct" />
+            <el-option label="病理切片" value="pathology" />
+            <el-option label="超声图像" value="ultrasound" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input
+            v-model="newDataset.description"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入数据集的描述信息"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="handleCloseCreateDialog">取消</el-button>
+        <el-button type="primary" @click="handleCreateDataset">创建</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 批量导入图片对话框 -->
+    <el-dialog
       title="批量导入图片到数据集"
       v-model="showUploadImagesDialog"
       width="600px"
       v-if="currentDataset"
     >
-        </el-dialog>
+      <el-upload
+        class="upload-demo"
+        drag
+        :action="`/api/datasets/${currentDataset.id}/images/batch`"
+        multiple
+        :on-success="handleUploadSuccess"
+        :on-error="handleUploadError"
+        :file-list="uploadFileList"
+        :headers="{ Authorization: `Bearer ${token}` }"
+        :limit="50"
+        :on-exceed="handleExceed"
+      >
+        <el-icon class="el-icon--upload"><Upload /></el-icon>
+        <div class="el-upload__text">
+          拖放文件到此处，或<em>点击上传</em>
+        </div>
+        <template #tip>
+          <div class="el-upload__tip text-center">
+            支持 JPG, PNG, TIFF, DICOM 等格式，单文件不超过 10MB，一次最多上传50个文件
+          </div>
+        </template>
+      </el-upload>
+      <template #footer>
+        <el-button @click="showUploadImagesDialog = false">关闭</el-button>
+      </template>
+    </el-dialog>
 
-    <el-dialog 
-      title="编辑数据集信息" 
+    <!-- 编辑数据集对话框 -->
+    <el-dialog
+      title="编辑数据集信息"
       v-model="showDatasetEditDialog"
       width="500px"
       v-if="editDataset"
     >
-        </el-dialog>
+      <el-form :model="editDataset" :rules="datasetRules" ref="editDatasetFormRef" label-position="top">
+        <el-form-item label="数据集名称" prop="name">
+          <el-input v-model="editDataset.name" />
+        </el-form-item>
+        <el-form-item label="任务类型" prop="taskType">
+          <el-select v-model="editDataset.taskType" style="width: 100%;">
+            <el-option label="目标检测" value="detection" />
+            <el-option label="图像分类" value="classification" />
+            <el-option label="语义分割" value="segmentation" />
+            <el-option label="姿态估计" value="pose" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="影像类型" prop="imageType">
+          <el-select v-model="editDataset.imageType" style="width: 100%;">
+            <el-option label="X光片" value="xray" />
+            <el-option label="CT扫描" value="ct" />
+            <el-option label="病理切片" value="pathology" />
+            <el-option label="超声图像" value="ultrasound" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input
+            v-model="editDataset.description"
+            type="textarea"
+            :rows="3"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showDatasetEditDialog = false">取消</el-button>
+        <el-button type="primary" @click="handleUpdateDataset">保存</el-button>
+      </template>
+    </el-dialog>
 
-    <el-dialog 
-      title="分享数据集" 
+    <!-- 分享数据集对话框 -->
+    <el-dialog
+      title="分享数据集"
       v-model="showShareDatasetDialog"
       width="500px"
       v-if="sharingDataset"
     >
-        </el-dialog>
+      <p>将数据集 "{{ sharingDataset.name }}" 分享给其他用户</p>
+      <el-form :model="shareForm" class="mt-4" label-position="top">
+        <el-form-item label="用户">
+          <el-autocomplete
+            v-model="userSearchText"
+            :fetch-suggestions="querySearchUsers"
+            placeholder="输入用户名搜索"
+            :loading="isSearchingUsers"
+            @select="handleUserSelect"
+          />
+        </el-form-item>
+        <el-form-item label="权限">
+          <el-select v-model="shareForm.permission" style="width: 100%;">
+            <el-option label="查看" value="view" />
+            <el-option label="编辑" value="edit" />
+            <el-option label="管理" value="admin" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showShareDatasetDialog = false">取消</el-button>
+        <el-button type="primary" @click="confirmShare">确认分享</el-button>
+      </template>
+    </el-dialog>
 
-    <el-dialog 
-      title="迁移数据集" 
+    <!-- 迁移数据集对话框 -->
+    <el-dialog
+      title="迁移数据集"
       v-model="showMoveDatasetDialog"
       width="500px"
       v-if="movingDataset"
     >
-        </el-dialog>
+      <p>将数据集 "{{ movingDataset.name }}" 迁移为其他任务类型</p>
+      <el-form :model="moveForm" class="mt-4" label-position="top">
+        <el-form-item label="新任务类型">
+          <el-select v-model="moveForm.newTaskType" style="width: 100%;">
+            <el-option label="目标检测" value="detection" />
+            <el-option label="图像分类" value="classification" />
+            <el-option label="语义分割" value="segmentation" />
+            <el-option label="姿态估计" value="pose" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="新数据集名称">
+          <el-input
+            v-model="moveForm.newName"
+            :placeholder="`${movingDataset.name}_${moveForm.newTaskType}`"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showMoveDatasetDialog = false">取消</el-button>
+        <el-button type="primary" @click="confirmMoveDataset">确认迁移</el-button>
+      </template>
+    </el-dialog>
 
+    <!-- 复制图片对话框 -->
     <el-dialog
-      v-if="currentDataset" 
-      title="复制图片到其他数据集" 
+      v-if="currentDataset"
+      title="复制图片到其他数据集"
       v-model="showCopyImagesDialog"
       width="500px"
     >
-        </el-dialog>
+      <p>将 {{ selectedImages.length }} 张图片复制到:</p>
+      <el-form :model="copyImagesForm" class="mt-4" label-position="top">
+        <el-form-item label="目标数据集">
+          <el-select
+            v-model="copyImagesForm.targetDatasetId"
+            style="width: 100%;"
+            placeholder="选择目标数据集"
+          >
+            <el-option
+              v-for="dataset in datasets"
+              :key="dataset.id"
+              :label="dataset.name"
+              :value="dataset.id"
+              :disabled="dataset.id === currentDataset.id"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showCopyImagesDialog = false">取消</el-button>
+        <el-button type="primary" @click="confirmCopyImages">确认复制</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -381,6 +542,7 @@ const shareForm = reactive({
   userId: '',
   permission: 'view'
 });
+const userSearchText = ref('');
 const searchUsersResult = ref([]);
 const isSearchingUsers = ref(false);
 const sharingDataset = ref(null);
@@ -572,7 +734,9 @@ const handleDeleteImage = async (imageId) => {
       
       // 从选中列表中移除
       selectedImages.value = selectedImages.value.filter(id => id !== imageId);
+      filterImages();
     }
+    fetchDatasets();
     ElMessage.success('图片删除成功');
   } catch (error) {
     ElMessage.error('删除图片失败: ' + (error.response?.data?.msg || error.message));
@@ -610,9 +774,10 @@ const confirmDeleteSelectedImages = async () => {
         currentDataset.value.images = currentDataset.value.images.filter(
           image => !selectedIds.has(image.id)
         );
-        currentDataset.value.image_count = currentDataset.value.images.length;
+        currentDataset.value.imageCount = currentDataset.value.images.length;
+        filterImages();
       }
-
+      fetchDatasets();
       selectedImages.value = [];
       ElMessage.success(`成功删除 ${countToDelete} 张图片`);
     } catch (error) {
@@ -672,16 +837,23 @@ const searchUsers = async (query) => {
 // --- 搜索用户的自动完成回调 ---
 const querySearchUsers = (queryString, cb) => {
   searchUsers(queryString).then(() => {
-    const results = searchUsersResult.value.map(user => ({
-      value: user.id,
-      label: user.username
-    }));
+    const results = searchUsersResult.value.map(user => {
+      return {
+        // ## FIX: 让 'value' 成为需要显示的用户名 ##
+        value: user.username, 
+        // ## ADDED: 将用户ID作为附加属性，供后续使用 ##
+        id: user.id 
+      };
+    });
     cb(results);
   });
 };
 
-const handleUserSelect = (user) => {
-  shareForm.userId = user.value;
+const handleUserSelect = (item) => {
+   // ## FIX: 从选中项的 'id' 属性获取用户ID ##
+  shareForm.userId = item.id; 
+  // ## FIX: 从选中项的 'value' 属性获取用户名以更新输入框 ##
+  userSearchText.value = item.value; 
 };
 
 // --- Event Handlers & UI Logic ---
@@ -752,8 +924,9 @@ const handleDatasetAction = (action, dataset) => {
       break;
     case 'share':
       sharingDataset.value = dataset;
-      shareForm.userId = '';
+      shareForm.userId = ''; // 清空ID
       shareForm.permission = 'view';
+      userSearchText.value = ''; // 清空输入框文本
       searchUsersResult.value = [];
       showShareDatasetDialog.value = true;
       break;
@@ -817,6 +990,7 @@ const handleUploadSuccess = (response, uploadFile, uploadFiles) => {
       uploadFileList.value = []; 
       if (currentDataset.value) {
         fetchDatasetDetails(currentDataset.value.id);
+        fetchDatasets();
       }
   }
 };
@@ -1003,45 +1177,55 @@ const handleCloseCreateDialog = () => {
 .dataset-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
-  padding: 20px;
+  grid-template-columns: repeat(4,minmax(0, 1fr)); 
+
+  column-gap: 16px; /* 列间距（左右间距）*/
+  row-gap: 16px;
+  padding: 20px 20px 10px; /* 底部内边距减小，平衡视觉 */
+  align-content: start;
   overflow-y: auto;
 }
 
+/* 强化数据集卡片视觉效果 - 重点修改 */
 .dataset-card {
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 16px;
+  /* 加粗边框并使用更深颜色 */
+  border: 1.5px solid #c5cddb;
+  border-radius: 10px;
+  padding: 20px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   background-color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  width: 100%; /* 改为100%，适配网格列宽 */
+  max-width: 211px; /* 保留最大宽度限制 */
+  /* 固定高度（根据内容调整合适值） */
+  height: 150px;
+}
+
+.dataset-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background-color: #378ef1; /* 左侧蓝色指示条，更明显 */
 }
 
 .dataset-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border-color: #d1d5db;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  border-color: #94a3b8; /* 悬停时边框颜色加深 */
 }
 
-/* 还原文件夹样式 */
-.folder-icon-container {
-  background-color: #f0f7ff;
-  width: 48px;
-  height: 48px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
-}
-
-.folder-icon {
+.dataset-icon {
   color: #378ef1;
   font-size: 24px;
+  margin-bottom: 12px;
 }
 
 .dataset-info .dataset-name {
