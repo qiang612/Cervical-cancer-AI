@@ -80,14 +80,46 @@ const routes = [
       // 多因素分析
       { path: 'multivariate-analysis', name: 'MultivariateAnalysis', component: ComingSoon, meta: { parentTitle: '多因素分析', title: '多因素分析' } },
 
-      // 模型评价
-      { path: 'model-evaluation/nomogram', name: 'Nomogram', component: () => import('../views/Nomogram.vue'), meta: { parentTitle: '模型评价', title: '列线图' } },
-      { path: 'model-evaluation/discrimination', name: 'Discrimination', component: ComingSoon, meta: { parentTitle: '模型评价', title: '区分度分析' } },
-      { path: 'model-evaluation/calibration', name: 'Calibration', component: ComingSoon, meta: { parentTitle: '模型评价', title: '校准度分析' } },
-      { path: 'model-evaluation/dca', name: 'DCA', component: ComingSoon, meta: { parentTitle: '模型评价', title: '决策曲线分析' } },
-      { path: 'model-evaluation/rationality', name: 'Rationality', component: ComingSoon, meta: { parentTitle: '模型评价', title: '合理性分析' } },
-      { path: 'model-evaluation/nri-idi', name: 'NriIdi', component: ComingSoon, meta: { parentTitle: '模型评价', title: 'NRI & IDI' } },
-      { path: 'model-evaluation/multi-model-comparison', name: 'MultiModelComparison', component: ComingSoon, meta: { parentTitle: '模型评价', title: '多模型比较' } },
+      {
+        path: '/result-evaluation',
+        name: 'ResultEvaluation',
+        component: () => import('../views/ResultEvaluation.vue'),
+        // 新增下面这行：当访问父路径时，自动跳转到第一个子路径
+        redirect: '/result-evaluation/multi-institution', 
+        meta: { parentTitle: '结果评估', title: '结果评估' },
+        children: [
+          { 
+            path: 'multi-institution', 
+            name: 'MultiInstitution', 
+            component: () => import('../views/evaluation/MultiInstitution.vue'), 
+            meta: { parentTitle: '结果评估', title: '多机构验证' } 
+          },
+          { 
+            path: 'reader-study', 
+            name: 'ReaderStudy', 
+            component: () => import('../views/evaluation/ReaderStudy.vue'), 
+            meta: { parentTitle: '结果评估', title: '多读者研究' } 
+          },
+          { 
+            path: 'community-screening', 
+            name: 'CommunityScreening', 
+            component: () => import('../views/evaluation/CommunityScreening.vue'), 
+            meta: { parentTitle: '结果评估', title: '社区筛查应用' } 
+          },
+          { 
+            path: 'hospital-screening', 
+            name: 'HospitalScreening', 
+            component: () => import('../views/evaluation/HospitalScreening.vue'), 
+            meta: { parentTitle: '结果评估', title: '医院筛查应用' } 
+          },
+          { 
+            path: 'efficiency-analysis', 
+            name: 'EfficiencyAnalysis', 
+            component: () => import('../views/evaluation/EfficiencyAnalysis.vue'), 
+            meta: { parentTitle: '结果评估', title: '效率分析' } 
+          }
+        ]
+      },
 
       // 交叉验证
       { path: 'cross-validation/simple', name: 'SimpleCV', component: ComingSoon, meta: { parentTitle: '交叉验证', title: '简单交叉验证' } },

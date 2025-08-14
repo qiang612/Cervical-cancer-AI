@@ -77,19 +77,17 @@
           <span>多因素分析</span>
         </el-menu-item>
 
-        <el-sub-menu index="/model-evaluation">
-          <template #title>
-            <el-icon><Trophy /></el-icon>
-            <span>模型评价</span>
-          </template>
-          <el-menu-item index="/model-evaluation/nomogram"><el-icon><DArrowRight /></el-icon>列线图</el-menu-item>
-          <el-menu-item index="/model-evaluation/discrimination"><el-icon><DArrowRight /></el-icon>区分度分析</el-menu-item>
-          <el-menu-item index="/model-evaluation/calibration"><el-icon><DArrowRight /></el-icon>校准度分析</el-menu-item>
-          <el-menu-item index="/model-evaluation/dca"><el-icon><DArrowRight /></el-icon>决策曲线分析</el-menu-item>
-          <el-menu-item index="/model-evaluation/rationality"><el-icon><DArrowRight /></el-icon>合理性分析</el-menu-item>
-          <el-menu-item index="/model-evaluation/nri-idi"><el-icon><DArrowRight /></el-icon>NRI & IDI</el-menu-item>
-          <el-menu-item index="/model-evaluation/multi-model-comparison"><el-icon><DArrowRight /></el-icon>多模型比较</el-menu-item>
-        </el-sub-menu>
+      <el-sub-menu index="/result-evaluation">
+        <template #title>
+          <el-icon><Trophy /></el-icon>
+          <span>结果评估</span>
+        </template>
+        <el-menu-item index="/result-evaluation/multi-institution"><el-icon><DArrowRight /></el-icon>多机构验证</el-menu-item>
+        <el-menu-item index="/result-evaluation/reader-study"><el-icon><DArrowRight /></el-icon>多读者研究</el-menu-item>
+        <el-menu-item index="/result-evaluation/community-screening"><el-icon><DArrowRight /></el-icon>社区筛查应用</el-menu-item>
+        <el-menu-item index="/result-evaluation/hospital-screening"><el-icon><DArrowRight /></el-icon>医院筛查应用</el-menu-item>
+        <el-menu-item index="/result-evaluation/efficiency-analysis"><el-icon><DArrowRight /></el-icon>效率分析</el-menu-item>
+      </el-sub-menu>
 
         <el-sub-menu index="/cross-validation">
           <template #title>
